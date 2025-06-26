@@ -1,0 +1,31 @@
+volumes:
+  postgres_data: {}
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql@16/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "psql -h 'localhost' -U 'postgres' -c '\\l'" ]
+      interval: 1s
+  swapi:
+    build: .
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - DB_HOST=db
+      - DJANGO_SETTINGS_MODULE=starwars_api.settings
+    depends_on:
+      - db

@@ -1,0 +1,22 @@
+# Python/Django files
+
+**/*.pyc
+**/*.pyo
+**/*.mo
+../.gitignore
+**/__pycache__/
+Dockerfile
+db.sqlite3
+**/*.md
+
+# Ignore pycharm files
+.idea/
+
+# Ignore python Mac files
+.DS_Store
+../.DS_Store
+
+
+# vuejs file
+
+node_modules/
