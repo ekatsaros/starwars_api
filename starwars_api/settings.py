@@ -43,8 +43,10 @@ INSTALLED_APPS = [
     # Third-party apps
     "rest_framework",
     "rest_framework.authtoken",
+    "drf_spectacular",
     # Custom apps
     "users.apps.UsersConfig",
+    "api.apps.ApiConfig",
 ]
 
 MIDDLEWARE = [
@@ -91,9 +93,13 @@ DATABASES = {
     }
 }
 
-# Use SQLite for testing if the "test" argument is provided
-if "test" in sys.argv:
-    DATABASES["default"] = {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}  # type: ignore
+# Use SQLite for testing if the "test" argument is provided or if POSTGRES_DB is not set
+if "test" in sys.argv or "test_coverage" in sys.argv or not os.environ.get("POSTGRES_DB"):
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",  # type: ignore
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -144,4 +150,13 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "STAR WARS API",
+    "DESCRIPTION": "This is an API for Star Wars Library like Movies, Characters, Ships and etc.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_AUTHENTICATION": ["rest_framework.authentication.TokenAuthentication"],
 }

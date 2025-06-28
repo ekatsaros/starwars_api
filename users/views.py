@@ -1,18 +1,33 @@
+from typing import List
+
 from django.contrib.auth import authenticate
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
+from rest_framework.authentication import BaseAuthentication
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, BasePermission
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .serializers.errors import (
+    AuthenticationErrorSerializer,
+    LoginValidationErrorSerializer,
+    RegistrationValidationErrorSerializer,
+)
 from .serializers.user import UserLoginSerializer, UserRequestSerializer, UserResponseSerializer
 
 
 class UserRegisterView(APIView):
 
-    permission_classes = [AllowAny]  # No authentication required for registration
+    authentication_classes: List[BaseAuthentication] = []  # No authentication required for registration
+    permission_classes: List[BasePermission] = [AllowAny]  # Allow any user to register
 
+    @extend_schema(
+        description="Create a new user",
+        request=UserRequestSerializer,
+        responses={201: UserResponseSerializer, 400: RegistrationValidationErrorSerializer},
+    )
     def post(self, request: Request) -> Response:
         """
         Create a new user
@@ -37,8 +52,18 @@ class UserRegisterView(APIView):
 
 class UserLoginView(APIView):
 
-    permission_classes = [AllowAny]
+    authentication_classes: List[BaseAuthentication] = []  # No authentication required for login
+    permission_classes: List[BasePermission] = [AllowAny]  # Allow any user to log in
 
+    @extend_schema(
+        description="Login a user",
+        request=UserLoginSerializer,
+        responses={
+            204: None,
+            400: LoginValidationErrorSerializer,
+            401: AuthenticationErrorSerializer,
+        },
+    )
     def post(self, request: Request) -> Response:
         """
         Log in a user
