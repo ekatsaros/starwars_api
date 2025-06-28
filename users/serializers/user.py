@@ -7,14 +7,14 @@ class UserRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApiUser
         fields = [
-            "id",
             "email",
             "username",
             "first_name",
             "last_name",
-            "is_active",
             "password",
         ]
+        read_only_fields = ["id", "is_active", "date_joined"]
+        extra_kwargs = {"password": {"write_only": True}}  # Ensure it’s never included in any serialized output
 
     # hash password field before saving to database
     def create(self, validated_data: dict) -> ApiUser:

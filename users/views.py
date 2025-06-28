@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,6 +11,8 @@ class UserRegisterView(APIView):
     """
     Create a new user
     """
+
+    permission_classes = [AllowAny]  # No authentication required for registration
 
     def post(self, request: Request) -> Response:
         """

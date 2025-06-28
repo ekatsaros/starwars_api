@@ -13,7 +13,6 @@ class TestUserRegistration(APITestCase):
             "username": "testuser",
             "email": "test@example.com",
             "password": "testpass123",
-            "password2": "testpass123",
         }
 
     def test_valid_registration(self) -> None:
