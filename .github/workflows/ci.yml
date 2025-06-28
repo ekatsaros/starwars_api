@@ -1,0 +1,43 @@
+name: CI
+
+on: [pull_request]  # Trigger the workflow on a pull request event.
+
+
+jobs:
+    test:  # Define a job named 'test'
+        name: Run unit tests  # A more descriptive name for the job
+        runs-on: ubuntu-22.04  # Specify the runner environment (Ubuntu 22.04)
+
+        steps:  # Steps to be run as part of this job
+            - name: Login to Docker Hub  # Step 1: Log in to Docker Hub
+              uses: docker/login-action@v3  # Use the docker/login-action to log in to Docker Hub
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}  # Use the stored Docker Hub username
+                password: ${{ secrets.DOCKERHUB_TOKEN }}  # Use the stored Docker Hub token for authentication
+
+            - name: Checkout  # Step 2: Checkout the repository code
+              uses: actions/checkout@v3  # Use the checkout action to checkout the code
+            - name: Test  # Step 3: Run the tests
+              run: sudo docker compose run --rm swapi sh -c "python3 manage.py test"  # Use Docker Compose to run the Django unit tests
+              env: # Step 4: Set the environment variables
+                POSTGRES_NAME: postgres
+                POSTGRES_USER: postgres
+                POSTGRES_PASSWORD: postgres
+    # add a job for pre-commit checks with docker login
+    pre-commit:
+        name: Pre-commit checks
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+            - name: Checkout
+              uses: actions/checkout@v3
+            - name: Pre-commit
+              run: docker compose run --rm swapi sh -c "git config --system --add safe.directory /app && pre-commit run --all-files --verbose --color always"
+              env:
+                POSTGRES_NAME: postgres
+                POSTGRES_USER: postgres
+                POSTGRES_PASSWORD: postgres
