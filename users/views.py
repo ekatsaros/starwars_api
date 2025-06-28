@@ -10,17 +10,22 @@ from .serializers.user import UserLoginSerializer, UserRequestSerializer, UserRe
 
 
 class UserRegisterView(APIView):
-    """
-    Create a new user
-    """
 
     permission_classes = [AllowAny]  # No authentication required for registration
 
     def post(self, request: Request) -> Response:
         """
         Create a new user
-        :param request:
-        :return: Response
+        :param request: The request containing user details (email, username, first_name, last_name, password)
+        :return: Response with status 201(created) and user data if successful, or error message if not.
+        example:
+        {
+            "email": "user1@test.com",
+            "username": "user1",
+            "first_name": "Test",
+            "last_name": "Test",
+            "password": "user123"
+        }
         """
         request_serializer = UserRequestSerializer(data=request.data)
         if request_serializer.is_valid():
@@ -31,17 +36,19 @@ class UserRegisterView(APIView):
 
 
 class UserLoginView(APIView):
-    """
-    Log in a user
-    """
 
     permission_classes = [AllowAny]
 
     def post(self, request: Request) -> Response:
         """
-        Login a user
-        :param request:
-        :return:
+        Log in a user
+        :param request: The request containing user credentials (email and password)
+        :return: Response with status 204(no content) and token in headers if successful, or error message if not
+        example:
+        {
+            "email": "test@email.com",
+            "password": "testpass123"
+        }
         """
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
