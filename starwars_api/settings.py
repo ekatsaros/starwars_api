@@ -29,6 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "0.0.0.0"]
 
+AUTH_USER_MODEL = "users.ApiUser"
 
 # Application definition
 
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Custom apps
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
