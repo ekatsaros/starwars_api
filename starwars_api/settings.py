@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # Third-party apps
     "rest_framework",
     "rest_framework.authtoken",
+    "drf_spectacular",
     # Custom apps
     "users.apps.UsersConfig",
 ]
@@ -144,4 +145,13 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "STAR WARS API",
+    "DESCRIPTION": "This is an API for Star Wars Library like Movies, Characters, Ships and etc.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_AUTHENTICATION": ["rest_framework.authentication.TokenAuthentication"],
 }
