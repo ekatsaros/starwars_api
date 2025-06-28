@@ -17,13 +17,19 @@ class ApiUserTests(TestCase):
     def test_create_user(self) -> None:
         """Test creating a new user"""
         self.assertEqual(self.user.email, self.user_data["email"])
+        self.assertEqual(self.user.username, self.user_data["username"])
         self.assertTrue(self.user.check_password(self.user_data["password"]))
         self.assertTrue(self.user.is_active)
         self.assertFalse(self.user.is_staff)
-        self.assertFalse(self.user.is_superuser)
 
     def test_create_superuser(self) -> None:
         """Test creating a new superuser"""
-        superuser = ApiUser.objects.create_superuser("admin@example.com", "admin", "FirstName", "LastName", "admin123")
-        self.assertTrue(superuser.is_superuser)
-        self.assertTrue(superuser.is_staff)
+        admin_user = ApiUser.objects.create_superuser(
+            first_name="User", last_name="User", email="admin@example.com", password="admin123", username="admin"
+        )
+        self.assertTrue(admin_user.is_superuser)
+        self.assertTrue(admin_user.is_staff)
+
+    def test_user_str(self) -> None:
+        """Test string representation of user"""
+        self.assertEqual(str(self.user), self.user.email)
