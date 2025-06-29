@@ -6,7 +6,7 @@ class Film(models.Model):
     title = models.CharField(max_length=255)
     swapi_url = models.URLField(unique=True)
     release_date = models.DateField()
-    # ... Add more fields as needed
+    data = models.JSONField()  # Stores the full SWAPI film response as JSON
 
     def __str__(self) -> str:
         return self.title

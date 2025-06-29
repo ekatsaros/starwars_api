@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 import requests  # type: ignore
 
@@ -17,17 +18,29 @@ class SWAPIClient:
         self.disable_ssl_verification = disable_ssl_verification
 
     @swapi_client_error_handler
-    def fetch_all(self, resource: str) -> dict:
-        url = f"{self.BASE_URL}/{resource}/"
+    def fetch_resource(self, resource: str, page: int = 1) -> dict:
+        url = f"{self.BASE_URL}/{resource}/?page={page}"
         resp = self.session.get(url, timeout=10, verify=not self.disable_ssl_verification)
         resp.raise_for_status()
         return resp.json()
 
-    def fetch_people(self) -> dict:
+    def fetch_all(self, resource: str) -> list[Any]:
+        """Fetch all items for a SWAPI resource (all pages)."""
+        results = []
+        page = 1
+        while True:
+            data = self.fetch_resource(resource, page=page)
+            results.extend(data.get("results", []))
+            if not data.get("next"):
+                break
+            page += 1
+        return results
+
+    def fetch_people(self) -> list[Any]:
         return self.fetch_all("people")
 
-    def fetch_films(self) -> dict:
+    def fetch_films(self) -> list:
         return self.fetch_all("films")
 
-    def fetch_starships(self) -> dict:
+    def fetch_starships(self) -> list:
         return self.fetch_all("starships")
