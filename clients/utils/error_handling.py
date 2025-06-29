@@ -1,7 +1,7 @@
 from functools import wraps
-from typing import Any, Dict
+from typing import Any
 
-from requests.exceptions import RequestException  # type: ignore
+from requests.exceptions import RequestException, SSLError  # type: ignore
 
 from .exceptions import SWAPIClientError
 
@@ -13,9 +13,11 @@ def swapi_client_error_handler(func):  # type: ignore
     """
 
     @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Dict[str, Any]:
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         try:
             return func(*args, **kwargs)
+        except SSLError as ssl_exc:
+            raise SWAPIClientError(f"SWAPI request failed with SSL Error: {ssl_exc}") from ssl_exc
         except RequestException as exc:
             raise SWAPIClientError(
                 f"SWAPI request failed: {exc.response.reason if exc.response else 'No response received'}",

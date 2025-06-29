@@ -108,3 +108,15 @@ class TestSWAPIClient(TestCase):
         self.assertEqual(exc.exception.message, "Unexpected error during SWAPI call: Unexpected error")
         self.assertIsNone(exc.exception.status_code)
         self.assertIsNone(exc.exception.reason)
+
+    @patch("clients.swapi_client.requests.Session.get")
+    def test_get_films_with_disable_ssl_verificatiion_true_raises_SSL_error(self, mock_get: Mock) -> None:
+        self.client.disable_ssl_verification = False
+        mock_get.side_effect = requests.exceptions.SSLError("SSL verification failed")
+
+        with self.assertRaises(SWAPIClientError) as exc:
+            self.client.fetch_films()
+
+        self.assertEqual(exc.exception.message, "SWAPI request failed with SSL Error: SSL verification failed")
+        self.assertIsNone(exc.exception.status_code)
+        self.assertIsNone(exc.exception.reason)

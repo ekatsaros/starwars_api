@@ -9,4 +9,5 @@ class SWAPIClientError(Exception):
 
     def __str__(self) -> str:
         status_info = f" (Status: {self.status_code})" if self.status_code else ""
-        return f"SWAPIClientError: {self.message}{status_info}"
+        reason_info = f" (Reason: {self.reason})" if self.reason else ""
+        return f"SWAPIClientError: {self.message}{status_info}{reason_info}"
