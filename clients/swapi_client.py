@@ -6,13 +6,14 @@ from clients.utils.error_handling import swapi_client_error_handler
 class SWAPIClient:
     BASE_URL = "https://swapi.dev/api/"
 
-    def __init__(self, session: requests.Session = None) -> None:
+    def __init__(self, session: requests.Session = None, disable_ssl_verification: bool = False) -> None:
         self.session = session or requests.Session()
+        self.disable_ssl_verification = disable_ssl_verification
 
     @swapi_client_error_handler
     def fetch_all(self, resource: str) -> dict:
         url = f"{self.BASE_URL}{resource}/"
-        resp = self.session.get(url, timeout=10, verify=False)
+        resp = self.session.get(url, timeout=10, verify=not self.disable_ssl_verification)
         resp.raise_for_status()
         return resp.json()
 

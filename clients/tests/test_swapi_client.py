@@ -10,7 +10,7 @@ from ..utils.exceptions import SWAPIClientError
 
 class TestSWAPIClient(TestCase):
     def setUp(self) -> None:
-        self.client = SWAPIClient()
+        self.client = SWAPIClient(disable_ssl_verification=True)
         self.base_url = "https://swapi.dev/api"
 
     def _mock_response(self, status: int = 200, content: dict = None, raise_error: bool = False) -> Mock:
@@ -68,7 +68,7 @@ class TestSWAPIClient(TestCase):
         mock_get.side_effect = http_error
 
         with self.assertRaises(SWAPIClientError) as exc:
-            self.client.fetch_people()
+            self.client.fetch_starships()
 
         self.assertEqual(exc.exception.status_code, 404)
         self.assertEqual(exc.exception.reason, "Not Found")
@@ -97,3 +97,14 @@ class TestSWAPIClient(TestCase):
         self.assertEqual(exc.exception.status_code, 500)
         self.assertEqual(exc.exception.reason, "Unknown Server Error")
         self.assertEqual(exc.exception.message, "SWAPI request failed: Unknown Server Error")
+
+    @patch("clients.swapi_client.requests.Session.get")
+    def test_get_films_raise_exception(self, mock_get: Mock) -> None:
+        mock_get.side_effect = Exception("Unexpected error")
+
+        with self.assertRaises(SWAPIClientError) as exc:
+            self.client.fetch_films()
+
+        self.assertEqual(exc.exception.message, "Unexpected error during SWAPI call: Unexpected error")
+        self.assertIsNone(exc.exception.status_code)
+        self.assertIsNone(exc.exception.reason)
