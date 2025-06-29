@@ -15,8 +15,8 @@ class Command(BaseCommand):
     def handle(self, *args: Any, **options: Any) -> None:
         self.stdout.write("Syncing Films...")
         self.service.fetch_and_store_films()
-        self.stdout.write("Syncing Characters...")
-        self.service.fetch_and_store_characters()
         self.stdout.write("Syncing Starships...")
         self.service.fetch_and_store_starships()
+        self.stdout.write("Syncing Characters...")
+        self.service.fetch_and_store_characters()
         self.stdout.write(self.style.SUCCESS("SWAPI data sync complete!"))

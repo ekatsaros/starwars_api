@@ -19,6 +19,7 @@ class SWAPIClient:
 
     @swapi_client_error_handler
     def fetch_resource(self, resource: str, page: int = 1) -> dict:
+        """Fetch a specific resource from SWAPI, paginated by page number."""
         url = f"{self.BASE_URL}/{resource}/?page={page}"
         resp = self.session.get(url, timeout=10, verify=not self.disable_ssl_verification)
         resp.raise_for_status()
@@ -39,8 +40,8 @@ class SWAPIClient:
     def fetch_people(self) -> list[Any]:
         return self.fetch_all("people")
 
-    def fetch_films(self) -> list:
+    def fetch_films(self) -> list[Any]:
         return self.fetch_all("films")
 
-    def fetch_starships(self) -> list:
+    def fetch_starships(self) -> list[Any]:
         return self.fetch_all("starships")
