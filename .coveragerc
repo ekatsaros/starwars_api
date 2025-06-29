@@ -1,0 +1,6 @@
+[run]
+omit =
+    **/.pyenv/**
+    manage.py
+    **/migrations/**
+    debug_*.py
