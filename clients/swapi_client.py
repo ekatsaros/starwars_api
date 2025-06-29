@@ -1,0 +1,26 @@
+import requests  # type: ignore
+
+from clients.utils.error_handling import swapi_client_error_handler
+
+
+class SWAPIClient:
+    BASE_URL = "https://swapi.dev/api/"
+
+    def __init__(self, session: requests.Session = None) -> None:
+        self.session = session or requests.Session()
+
+    @swapi_client_error_handler
+    def fetch_all(self, resource: str) -> dict:
+        url = f"{self.BASE_URL}{resource}/"
+        resp = self.session.get(url, timeout=10, verify=False)
+        resp.raise_for_status()
+        return resp.json()
+
+    def fetch_people(self) -> dict:
+        return self.fetch_all("people")
+
+    def fetch_films(self) -> dict:
+        return self.fetch_all("films")
+
+    def fetch_starships(self) -> dict:
+        return self.fetch_all("starships")
