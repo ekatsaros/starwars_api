@@ -18,6 +18,24 @@ class FilmModelTest(TestCase):
             "title": "A New Hope",
             "swapi_url": "https://swapi.dev/api/films/1/",
             "release_date": date(1977, 5, 25),
+            "data": {
+                "title": "A New Hope",
+                "episode_id": 4,
+                "opening_crawl": "It is a period of civil war. Rebel spaceships, "
+                "striking from a hidden base, have won their first "
+                "victory against the evil Galactic Empire.",
+                "director": "George Lucas",
+                "producer": "Gary Kurtz, Rick McCallum",
+                "release_date": "1977-05-25",
+                "created": "2014-12-10T14:23:31.880000Z",
+                "edited": "2014-12-20T19:49:45.256000Z",
+                "url": "https://swapi.dev/api/films/1/",
+                "characters": [
+                    "https://swapi.dev/api/people/1/",
+                    "https://swapi.dev/api/people/2/",
+                    "https://swapi.dev/api/people/3/",
+                ],
+            },
         }
 
     def test_create_film(self) -> None:
@@ -152,7 +170,10 @@ class CharacterModelTest(TestCase):
     def setUp(self) -> None:
         """Set up test data"""
         self.film = Film.objects.create(
-            title="A New Hope", swapi_url="https://swapi.dev/api/films/1/", release_date=date(1977, 5, 25)
+            title="A New Hope",
+            swapi_url="https://swapi.dev/api/films/1/",
+            release_date=date(1977, 5, 25),
+            data={"title": "A New Hope", "episode_id": 4},
         )
 
         self.starship = Starship.objects.create(
@@ -247,7 +268,10 @@ class CharacterModelTest(TestCase):
 
         # Add another film
         film2 = Film.objects.create(
-            title="The Empire Strikes Back", swapi_url="https://swapi.dev/api/films/2/", release_date=date(1980, 5, 21)
+            title="The Empire Strikes Back",
+            swapi_url="https://swapi.dev/api/films/2/",
+            release_date=date(1980, 5, 21),
+            data={"title": "The Empire Strikes Back", "episode_id": 5},
         )
 
         # Add another starship
@@ -293,7 +317,10 @@ class VoteModelTest(TestCase):
         )
 
         self.film = Film.objects.create(
-            title="A New Hope", swapi_url="https://swapi.dev/api/films/1/", release_date=date(1977, 5, 25)
+            title="A New Hope",
+            swapi_url="https://swapi.dev/api/films/1/",
+            release_date=date(1977, 5, 25),
+            data={"title": "A New Hope", "episode_id": 4},
         )
 
         self.starship = Starship.objects.create(
@@ -434,7 +461,10 @@ class ModelRelationshipIntegrationTest(TestCase):
 
         # Create a film
         self.film = Film.objects.create(
-            title="A New Hope", swapi_url="https://swapi.dev/api/films/1/", release_date=date(1977, 5, 25)
+            title="A New Hope",
+            swapi_url="https://swapi.dev/api/films/1/",
+            release_date=date(1977, 5, 25),
+            data={"title": "A New Hope", "episode_id": 4},
         )
 
         # Create starships

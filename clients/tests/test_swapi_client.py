@@ -26,9 +26,9 @@ class TestSWAPIClient(TestCase):
         mock_data = {"results": [{"title": "A New Hope", "episode_id": 4, "release_date": "1977-05-25"}]}
         mock_get.return_value = self._mock_response(content=mock_data)
 
-        result = self.client.fetch_films()["results"]
+        result = self.client.fetch_films()
 
-        mock_get.assert_called_once_with(f"{self.base_url}/films/", timeout=10, verify=False)
+        mock_get.assert_called_once_with(f"{self.base_url}/films/?page=1", timeout=10, verify=False)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]["title"], "A New Hope")
 
@@ -37,9 +37,9 @@ class TestSWAPIClient(TestCase):
         mock_data = {"results": [{"name": "Luke Skywalker", "height": "172", "mass": "77"}]}
         mock_get.return_value = self._mock_response(content=mock_data)
 
-        result = self.client.fetch_people()["results"]
+        result = self.client.fetch_people()
 
-        mock_get.assert_called_once_with(f"{self.base_url}/people/", timeout=10, verify=False)
+        mock_get.assert_called_once_with(f"{self.base_url}/people/?page=1", timeout=10, verify=False)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]["name"], "Luke Skywalker")
 
@@ -56,9 +56,9 @@ class TestSWAPIClient(TestCase):
         }
         mock_get.return_value = self._mock_response(content=mock_data)
 
-        result = self.client.fetch_starships()["results"]
+        result = self.client.fetch_starships()
 
-        mock_get.assert_called_once_with(f"{self.base_url}/starships/", timeout=10, verify=False)
+        mock_get.assert_called_once_with(f"{self.base_url}/starships/?page=1", timeout=10, verify=False)
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]["name"], "Death Star")
 
