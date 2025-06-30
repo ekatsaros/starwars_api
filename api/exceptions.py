@@ -6,6 +6,7 @@ import logging
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import DatabaseError
+from django.db.utils import IntegrityError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
@@ -20,6 +21,12 @@ class StarWarsAPIException(Exception):
         self.message = message
         self.status_code = status_code
         super().__init__(self.message)
+
+
+class UniqueConstraintError(IntegrityError):
+    """Exception raised when a unique constraint is violated."""
+
+    pass
 
 
 class DatabaseOperationError(StarWarsAPIException):

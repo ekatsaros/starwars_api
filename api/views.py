@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 
 from api.serializers import CharacterSerializer, FilmSerializer, StarshipSerializer, VoteSerializer
 
+from .exceptions import UniqueConstraintError
 from .fetch_db_data_service import DatabaseServiceException, FetchDBDataService
 
 
@@ -187,6 +188,10 @@ class VoteApiView(APIView):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except UniqueConstraintError as e:
+            return Response(
+                {"error": "You have already voted for an item.", "detail": str(e)}, status=status.HTTP_409_CONFLICT
+            )
         except DatabaseServiceException as e:
             return Response({"error": f"Database error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:

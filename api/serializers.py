@@ -1,5 +1,7 @@
+from django.db import IntegrityError
 from rest_framework import serializers
 
+from api.exceptions import UniqueConstraintError
 from api.models import Character, Film, Starship, Vote
 
 
@@ -58,3 +60,11 @@ class VoteSerializer(serializers.ModelSerializer):
         model = Vote
         fields = ["id", "character", "film", "starship", "created_at"]
         read_only_fields = ["id", "created_at", "user"]
+
+    def create(self, validated_data: dict) -> Vote:
+        try:
+            return super().create(validated_data)
+        except IntegrityError as e:
+            if "UNIQUE constraint failed" in str(e):
+                raise UniqueConstraintError(e)
+            raise
