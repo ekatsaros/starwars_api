@@ -198,6 +198,10 @@ open htmlcov/index.html  # macOS
 xdg-open htmlcov/index.html  # Linux
 ```
 
+### Coverage Report
+
+![Coverage Report Image](img_2.png)
+
 ## Docker Development
 
 ### Using Docker Compose
@@ -344,9 +348,20 @@ This project is licensed under the MIT License.
 ---
 
 ## Next Steps
-- Add more unit tests for star wars api endpoints and for edge cases
-- Increase test coverage
-- Improve error handling for external API failures
-- Refactor code for better readability and maintainability
+A lot of time and effort has gone into building this Star Wars API already leaving things out, so for that reason in this section we will describe the next steps to take this project further.
+
+Here are some suggested next steps to further enhance the project:
+
+- **Add more tests for edge cases and for Database Service.**
+- **Increase test coverage by adding more tests for serializers, views, and models, especially for error handling.**
+- **Improve error handling for external API failures.**
+- **Refactor code for better readability and maintainability(e.g., break views and tests into separate files).**
+- **Mixin or BaseSWAPIView for common functionality across views (like pagination and search).**
+- **Implement caching for SWAPI data to reduce API calls and improve performance.**
+- **Periodic tasks to update data from SWAPI.**
+- **Use fixture JSON files for testing to avoid duplicating test data.**
+- **Implement CP pipelines for CI/CD.**
+
+
 
 **May the Force be with you!** 🌟
