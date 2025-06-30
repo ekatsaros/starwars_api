@@ -28,20 +28,22 @@ class SWAPIService:
         films_data = self.client.fetch_films()
         stored_films = []
 
-        films_to_create = []
         for film_data in films_data:
             # Parse the release_date from SWAPI format (YYYY-MM-DD) to date object
             release_date = datetime.strptime(film_data["release_date"], "%Y-%m-%d").date()
-            films_to_create.append(
-                Film(
-                    title=film_data["title"],
-                    swapi_url=film_data["url"],
-                    release_date=release_date,
-                    data=film_data,
-                )
+
+            # Use update_or_create to handle existing records
+            film, created = Film.objects.update_or_create(
+                swapi_url=film_data["url"],  # This should be the unique field
+                defaults={
+                    "title": film_data["title"],
+                    "release_date": release_date,
+                    "data": film_data,
+                },
             )
-        stored_films = Film.objects.bulk_create(films_to_create)
-        # Build films cache right after creating films
+            stored_films.append(film)
+
+        # Build films cache right after creating/updating films
         self._build_films_cache()
 
         return stored_films
@@ -49,17 +51,20 @@ class SWAPIService:
     @transaction.atomic
     def fetch_and_store_starships(self) -> List[Starship]:
         starships_data = self.client.fetch_starships()
-        starships_to_create = []
+        stored_starships = []
+
         for starship_data in starships_data:
-            starships_to_create.append(
-                Starship(
-                    name=starship_data["name"],
-                    swapi_url=starship_data["url"],
-                    data=starship_data,
-                )
+            # Use update_or_create to handle existing records
+            starship, created = Starship.objects.update_or_create(
+                swapi_url=starship_data["url"],  # This should be the unique field
+                defaults={
+                    "name": starship_data["name"],
+                    "data": starship_data,
+                },
             )
-        stored_starships = Starship.objects.bulk_create(starships_to_create)
-        # Build starships cache right after creating starships
+            stored_starships.append(starship)
+
+        # Build starships cache right after creating/updating starships
         self._build_starships_cache()
         return stored_starships
 
@@ -75,17 +80,25 @@ class SWAPIService:
         stored_characters = []
 
         for character_data in characters_data:
-            # Create the character first
-            character = Character.objects.create(
-                name=character_data["name"],
-                swapi_url=character_data["url"],
-                data=character_data,
+            # Use update_or_create to handle existing records
+            character, created = Character.objects.update_or_create(
+                swapi_url=character_data["url"],  # This should be the unique field
+                defaults={
+                    "name": character_data["name"],
+                    "data": character_data,
+                },
             )
 
-            # Add many-to-many relationships after creation
+            # Clear existing many-to-many relationships if updating
+            if not created:
+                character.films.clear()
+                character.starships.clear()
+
+            # Add many-to-many relationships
             # Add films
             films = [self.films_cache[film_url] for film_url in character_data["films"] if film_url in self.films_cache]
             character.films.add(*films)
+
             # Add starships
             starships = [
                 self.starships_cache[starship_url]
