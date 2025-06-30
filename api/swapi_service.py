@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Set
+from typing import Dict, List
 
 from django.db import transaction
 
@@ -27,12 +27,11 @@ class SWAPIService:
     def fetch_and_store_films(self) -> List[Film]:
         films_data = self.client.fetch_films()
 
-        # Get existing films URLs to determine what needs to be created vs updated
-        existing_urls: Set[str] = set(
-            Film.objects.filter(swapi_url__in=[film_data["url"] for film_data in films_data]).values_list(
-                "swapi_url", flat=True
-            )
-        )
+        # Prefetch all existing films into a dictionary keyed by swapi_url
+        incoming_urls = [film_data["url"] for film_data in films_data]
+        existing_films_dict: Dict[str, Film] = {
+            film.swapi_url: film for film in Film.objects.filter(swapi_url__in=incoming_urls)
+        }
 
         films_to_create = []
         films_to_update = []
@@ -41,9 +40,9 @@ class SWAPIService:
             # Parse the release_date from SWAPI format (YYYY-MM-DD) to date object
             release_date = datetime.strptime(film_data["release_date"], "%Y-%m-%d").date()
 
-            if film_data["url"] in existing_urls:
-                # Update existing film
-                film = Film.objects.get(swapi_url=film_data["url"])
+            if film_data["url"] in existing_films_dict:
+                # Update existing film (no database query needed)
+                film = existing_films_dict[film_data["url"]]
                 film.title = film_data["title"]
                 film.release_date = release_date
                 film.data = film_data
@@ -74,20 +73,19 @@ class SWAPIService:
     def fetch_and_store_starships(self) -> List[Starship]:
         starships_data = self.client.fetch_starships()
 
-        # Get existing starships URLs to determine what needs to be created vs updated
-        existing_urls: Set[str] = set(
-            Starship.objects.filter(
-                swapi_url__in=[starship_data["url"] for starship_data in starships_data]
-            ).values_list("swapi_url", flat=True)
-        )
+        # Prefetch all existing starships into a dictionary keyed by swapi_url
+        incoming_urls = [starship_data["url"] for starship_data in starships_data]
+        existing_starships_dict: Dict[str, Starship] = {
+            starship.swapi_url: starship for starship in Starship.objects.filter(swapi_url__in=incoming_urls)
+        }
 
         starships_to_create = []
         starships_to_update = []
 
         for starship_data in starships_data:
-            if starship_data["url"] in existing_urls:
-                # Update existing starship
-                starship = Starship.objects.get(swapi_url=starship_data["url"])
+            if starship_data["url"] in existing_starships_dict:
+                # Update existing starship (no database query needed - using dict lookup)
+                starship = existing_starships_dict[starship_data["url"]]
                 starship.name = starship_data["name"]
                 starship.data = starship_data
                 starships_to_update.append(starship)
@@ -122,20 +120,19 @@ class SWAPIService:
 
         characters_data = self.client.fetch_people()
 
-        # Get existing characters URLs to determine what needs to be created vs updated
-        existing_urls: Set[str] = set(
-            Character.objects.filter(
-                swapi_url__in=[character_data["url"] for character_data in characters_data]
-            ).values_list("swapi_url", flat=True)
-        )
+        # Prefetch all existing characters into a dictionary keyed by swapi_url
+        incoming_urls = [character_data["url"] for character_data in characters_data]
+        existing_characters_dict: Dict[str, Character] = {
+            character.swapi_url: character for character in Character.objects.filter(swapi_url__in=incoming_urls)
+        }
 
         characters_to_create = []
         characters_to_update = []
 
         for character_data in characters_data:
-            if character_data["url"] in existing_urls:
-                # Update existing character
-                character = Character.objects.get(swapi_url=character_data["url"])
+            if character_data["url"] in existing_characters_dict:
+                # Update existing character (no database query needed)
+                character = existing_characters_dict[character_data["url"]]
                 character.name = character_data["name"]
                 character.data = character_data
                 characters_to_update.append(character)
