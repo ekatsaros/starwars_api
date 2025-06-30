@@ -28,7 +28,7 @@ This application:
 - Includes custom error handling and logging
 - Features comprehensive unit tests with coverage reporting
 - Uses Django REST Framework for API implementation
-- Supports both SQLite (development) and PostgresSQL (production) databases
+- Supports both SQLite (development) and PostgreSQL (production) databases
 
 ## Features
 
@@ -47,8 +47,8 @@ Before you begin, ensure you have the following installed:
 - **Python 3.12** or higher
 - **pip** (Python package installer)
 - **Git**
-- **PostgresSQL** - (optional - SQLite is used by default)
-- **Docker & Docker Compose** - (optional - for containerized development)
+- **PostgreSQL** (optional - SQLite is used by default)
+- **Docker & Docker Compose** (optional - for containerized development)
 
 ## Installation & Setup
 
@@ -169,11 +169,11 @@ All endpoints return data in the following format:
       "producer": "Gary Kurtz, Rick McCallum",
       "release_date": "1977-05-25",
       "characters": [
-        "/api/characters/1/",
-        "/api/characters/2/"
+        "/api/starwars/characters/1/",
+        "/api/starwars/characters/2/"
       ],
       "starships": [
-        "/api/starships/1/"
+        "/api/starwars/starships/1/"
       ]
     }
   ],
@@ -327,7 +327,7 @@ starwars_api/
 
 ### Common Issues
 
-1. **Database connection errors**: Make sure PostgresSQL is running if using PostgresSQL or ensure SQLite permissions are correct.
+1. **Database connection errors**: Make sure PostgreSQL is running if using PostgreSQL or ensure SQLite permissions are correct.
 
 2. **SWAPI import fails**: Check your internet connection and SWAPI availability at https://swapi.dev/
 
