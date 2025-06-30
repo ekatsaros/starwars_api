@@ -131,11 +131,14 @@ The API will be available at: `http://localhost:8000/api/`
 
 ### Available Endpoints
 
-| Endpoint | Method | Description | Query Parameters |
-|----------|--------|-------------|------------------|
-| `/api/films/` | GET | List all films | `?page=1&search=<term>` |
-| `/api/characters/` | GET | List all characters | `?page=1&search=<term>` |
-| `/api/starships/` | GET | List all starships | `?page=1&search=<term>` |
+| Endpoint                    | Method | Description         | Query Parameters                                         | Authentication |
+|-----------------------------|--------|---------------------|----------------------------------------------------------|----------------|
+| `/api/starwars/films/`      | GET    | List all films      | `?page=1&search=<term>`                                  | No             |
+| `/api/starwars/characters/` | GET    | List all characters | `?page=1&search=<term>`                                  | No             |
+| `/api/starwars/starships/`  | GET    | List all starships  | `?page=1&search=<term>`                                  | No             |
+| `/api/votes/`               | POST   | Create a vote       | `film_id`, `character_id`, `starship_id`                 | Yes            |
+| `/api/users/register/`      | POST   | Register a user     | `first_name`,`last_name`,`username`, `password`, `email` | No             |
+| `/api/users/login/`         | POST   | User login          | `username`, `password`                                   | No             |
 
 ### Example API Calls
 
@@ -156,7 +159,24 @@ All endpoints return data in the following format:
 
 ```json
 {
-  "films": [...],
+  "films": [
+    {
+      "id": 1,
+      "title": "A New Hope",
+      "episode_id": 4,
+      "opening_crawl": "It is a period of civil war...",
+      "director": "George Lucas",
+      "producer": "Gary Kurtz, Rick McCallum",
+      "release_date": "1977-05-25",
+      "characters": [
+        "/api/starwars/characters/1/",
+        "/api/starwars/characters/2/"
+      ],
+      "starships": [
+        "/api/starwars/starships/1/"
+      ]
+    }
+  ],
   "pagination": {
     "total_pages": 1,
     "current_page": 1,
@@ -307,7 +327,7 @@ starwars_api/
 
 ### Common Issues
 
-1. **Database connection errors**: Make sure PostgreSQL is running if using PostgreSQL, or ensure SQLite permissions are correct.
+1. **Database connection errors**: Make sure PostgreSQL is running if using PostgreSQL or ensure SQLite permissions are correct.
 
 2. **SWAPI import fails**: Check your internet connection and SWAPI availability at https://swapi.dev/
 
@@ -355,7 +375,7 @@ Here are some suggested next steps to further enhance the project:
 - **Add more tests for edge cases and for Database Service.**
 - **Increase test coverage by adding more tests for serializers, views, and models, especially for error handling.**
 - **Improve error handling for external API failures.**
-- **Refactor code for better readability and maintainability(e.g., break views and tests into separate files).**
+- **Refactor code for better readability and maintainability (e.g., break views and tests into separate files).**
 - **Mixin or BaseSWAPIView for common functionality across views (like pagination and search).**
 - **Implement caching for SWAPI data to reduce API calls and improve performance.**
 - **Periodic tasks to update data from SWAPI.**
