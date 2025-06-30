@@ -28,7 +28,7 @@ This application:
 - Includes custom error handling and logging
 - Features comprehensive unit tests with coverage reporting
 - Uses Django REST Framework for API implementation
-- Supports both SQLite (development) and PostgreSQL (production) databases
+- Supports both SQLite (development) and PostgresSQL (production) databases
 
 ## Features
 
@@ -47,8 +47,8 @@ Before you begin, ensure you have the following installed:
 - **Python 3.12** or higher
 - **pip** (Python package installer)
 - **Git**
-- **PostgreSQL** (optional - SQLite is used by default)
-- **Docker & Docker Compose** (optional - for containerized development)
+- **PostgresSQL** - (optional - SQLite is used by default)
+- **Docker & Docker Compose** - (optional - for containerized development)
 
 ## Installation & Setup
 
@@ -131,11 +131,14 @@ The API will be available at: `http://localhost:8000/api/`
 
 ### Available Endpoints
 
-| Endpoint | Method | Description | Query Parameters |
-|----------|--------|-------------|------------------|
-| `/api/films/` | GET | List all films | `?page=1&search=<term>` |
-| `/api/characters/` | GET | List all characters | `?page=1&search=<term>` |
-| `/api/starships/` | GET | List all starships | `?page=1&search=<term>` |
+| Endpoint                    | Method | Description         | Query Parameters                                         | Authentication |
+|-----------------------------|--------|---------------------|----------------------------------------------------------|----------------|
+| `/api/starwars/films/`      | GET    | List all films      | `?page=1&search=<term>`                                  | No             |
+| `/api/starwars/characters/` | GET    | List all characters | `?page=1&search=<term>`                                  | No             |
+| `/api/starwars/starships/`  | GET    | List all starships  | `?page=1&search=<term>`                                  | No             |
+| `/api/votes/`               | POST   | Create a vote       | `film_id`, `character_id`, `starship_id`                 | Yes            |
+| `/api/users/register/`      | POST   | Register a user     | `first_name`,`last_name`,`username`, `password`, `email` | No             |
+| `/api/users/login/`         | POST   | User login          | `username`, `password`                                   | No             |
 
 ### Example API Calls
 
@@ -156,7 +159,24 @@ All endpoints return data in the following format:
 
 ```json
 {
-  "films": [...],
+  "films": [
+    {
+      "id": 1,
+      "title": "A New Hope",
+      "episode_id": 4,
+      "opening_crawl": "It is a period of civil war...",
+      "director": "George Lucas",
+      "producer": "Gary Kurtz, Rick McCallum",
+      "release_date": "1977-05-25",
+      "characters": [
+        "/api/characters/1/",
+        "/api/characters/2/"
+      ],
+      "starships": [
+        "/api/starships/1/"
+      ]
+    }
+  ],
   "pagination": {
     "total_pages": 1,
     "current_page": 1,
@@ -197,6 +217,10 @@ open htmlcov/index.html  # macOS
 # or
 xdg-open htmlcov/index.html  # Linux
 ```
+
+### Coverage Report
+
+![Coverage Report Image](img_2.png)
 
 ## Docker Development
 
@@ -303,7 +327,7 @@ starwars_api/
 
 ### Common Issues
 
-1. **Database connection errors**: Make sure PostgreSQL is running if using PostgreSQL, or ensure SQLite permissions are correct.
+1. **Database connection errors**: Make sure PostgresSQL is running if using PostgresSQL or ensure SQLite permissions are correct.
 
 2. **SWAPI import fails**: Check your internet connection and SWAPI availability at https://swapi.dev/
 
@@ -344,9 +368,20 @@ This project is licensed under the MIT License.
 ---
 
 ## Next Steps
-- Add more unit tests for star wars api endpoints and for edge cases
-- Increase test coverage
-- Improve error handling for external API failures
-- Refactor code for better readability and maintainability
+A lot of time and effort has gone into building this Star Wars API already leaving things out, so for that reason in this section we will describe the next steps to take this project further.
+
+Here are some suggested next steps to further enhance the project:
+
+- **Add more tests for edge cases and for Database Service.**
+- **Increase test coverage by adding more tests for serializers, views, and models, especially for error handling.**
+- **Improve error handling for external API failures.**
+- **Refactor code for better readability and maintainability (e.g., break views and tests into separate files).**
+- **Mixin or BaseSWAPIView for common functionality across views (like pagination and search).**
+- **Implement caching for SWAPI data to reduce API calls and improve performance.**
+- **Periodic tasks to update data from SWAPI.**
+- **Use fixture JSON files for testing to avoid duplicating test data.**
+- **Implement CP pipelines for CI/CD.**
+
+
 
 **May the Force be with you!** 🌟
