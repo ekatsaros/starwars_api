@@ -14,6 +14,7 @@ class FilmSerializer(serializers.ModelSerializer):
             "swapi_url",
             "release_date",
             "data",  # Full SWAPI film response as JSON
+            "votes",
         ]
 
 
@@ -27,6 +28,7 @@ class StarshipSerializer(serializers.ModelSerializer):
             "name",
             "swapi_url",
             "data",  # Full SWAPI starship response as JSON
+            "votes",
         ]
 
 
@@ -45,6 +47,7 @@ class CharacterSerializer(serializers.ModelSerializer):
             "films",
             "starships",
             "data",  # Full SWAPI character response as JSON
+            "votes",
         ]
 
 
@@ -53,4 +56,5 @@ class VoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vote
-        fields = ["id", "user", "character", "film", "starship", "created_at"]
+        fields = ["id", "character", "film", "starship", "created_at"]
+        read_only_fields = ["id", "created_at", "user"]

@@ -11,6 +11,10 @@ class Film(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    @property
+    def votes(self) -> int:
+        return self.vote_set.count()
+
 
 class Starship(models.Model):
     name = models.CharField(max_length=255)
@@ -19,6 +23,11 @@ class Starship(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    @property
+    def votes(self) -> int:
+        """Returns the total number of votes for this starship."""
+        return self.vote_set.count()
 
 
 class Character(models.Model):
@@ -30,6 +39,11 @@ class Character(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    @property
+    def votes(self) -> int:
+        """Returns the total number of votes for this character."""
+        return self.vote_set.count()
 
 
 class Vote(models.Model):

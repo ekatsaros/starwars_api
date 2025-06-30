@@ -2,13 +2,13 @@ from typing import List
 
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
-from rest_framework.authentication import BaseAuthentication
-from rest_framework.permissions import AllowAny, BasePermission
+from rest_framework.authentication import BaseAuthentication, TokenAuthentication
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.serializers import CharacterSerializer, FilmSerializer, StarshipSerializer
+from api.serializers import CharacterSerializer, FilmSerializer, StarshipSerializer, VoteSerializer
 
 from .fetch_db_data_service import DatabaseServiceException, FetchDBDataService
 
@@ -160,6 +160,35 @@ class CharacterApiView(APIView):
             return Response({"error": f"Database error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except ValueError as e:
             return Response({"error": f"Invalid page number {e}"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class VoteApiView(APIView):
+    """API view for voting on Films, Characters, or Starships."""
+
+    authentication_classes: List[BaseAuthentication] = [TokenAuthentication]
+    permission_classes: List[BasePermission] = [IsAuthenticated]
+
+    @extend_schema(
+        description="Vote for a Film, Character, or Starship",
+        request=VoteSerializer,
+        responses={201: VoteSerializer},
+    )
+    def post(self, request: Request) -> Response:
+        """Create a vote for a specific item."""
+        try:
+            serializer = VoteSerializer(data=request.data)
+            if serializer.is_valid():
+                # Set the user from the authenticated request
+                serializer.validated_data["user"] = request.user
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except DatabaseServiceException as e:
+            return Response({"error": f"Database error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
             return Response(
                 {"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
